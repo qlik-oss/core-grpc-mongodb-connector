@@ -1,0 +1,1 @@
+docker build . -t qlikea/mongodb-grpc-connector:dev

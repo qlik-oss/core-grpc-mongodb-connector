@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+docker build . -t qlikea/mongodb-grpc-connector-database:dev

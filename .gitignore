@@ -1,0 +1,11 @@
+node_modules/
+example/reload-runner/node_modules
+.vscode/
+.idea/
+npm-debug.log
+.DS_Store
+
+# Ignore .orig merge files (BC, KDiff3 etc.)
+*.orig
+
+/.npmrc
