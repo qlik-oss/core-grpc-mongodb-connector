@@ -1,0 +1,11 @@
+{
+    "name": "mongodb-grpc-connector-example-reload-runner",
+    "private": true,
+    "version": "0.0.1",
+    "author": "QlikTech International AB",
+    "license": "MIT",
+    "dependencies": {
+        "enigma.js": "2.0",
+        "ws": "3.2.0"
+    }
+}
