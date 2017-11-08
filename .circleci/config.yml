@@ -1,0 +1,45 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: node:8
+    working_directory: ~/mongodb-grpc-connector
+    environment:
+      DOCKER_REPO: qlikea/mongodb-grpc-connector
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install Docker client
+          command: |
+            curl -fsSL get.docker.com -o get-docker.sh
+            sh get-docker.sh
+      - run:
+          name: Login to Docker
+          command: docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+      - run:
+          name: Spin up environment
+          working_directory: ~/mongodb-grpc-connector/example
+          command: |
+            docker-compose up -d
+      - run:
+          name: Execute tests on remote dockers
+          working_directory: ~/mongodb-grpc-connector/example/reload-runner
+          command: |
+            docker cp ./ node-test-runner:./reload-runner/
+            docker exec node-test-runner sh -c 'TEST_HOST=qix-engine node index.js'
+      - run:
+          name: Build Docker Image
+          command: |
+            VER="0.0.1-$CIRCLE_BUILD_NUM"
+            echo "$VER" > workspace/version.txt
+            docker build -t $DOCKER_REPO:$VER .
+      - run:
+          name: Push image to Docker Hub
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              VER=$(cat /workspace/version.txt)
+              docker tag $DOCKER_REPO:$VER $DOCKER_REPO:latest
+            fi
+            docker push $DOCKER_REPO
+

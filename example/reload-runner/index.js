@@ -1,11 +1,13 @@
 const WebSocket = require('ws');
 const schema = require('enigma.js/schemas/12.34.11.json');
-var enigma = require('enigma.js')
+var enigma = require('enigma.js');
+
+const host = process.env.TEST_HOST || 'localhost';
 
 // create a new session:
 const session = enigma.create({
 	schema,
-	url: 'ws://localhost:9076/app/engineData',
+	url: `ws://${host}:9076/app/engineData`,
 	createSocket: url => new WebSocket(url),
 });
 
@@ -18,7 +20,7 @@ var trafficLog = false;
 
 if (trafficLog) {
 	// bind traffic events to log what is sent and received on the socket:
- 	session.on('traffic:sent', data => console.log('sent:', data));
+	session.on('traffic:sent', data => console.log('sent:', data));
 	session.on('traffic:received', data => console.log('received:', data));
 }
 
@@ -26,9 +28,9 @@ session.open()
 	.then((_global) => {
 		global = _global;
 		console.log('Creating/opening app');
-		return global.createApp(appId).then( (appInfo) => {
+		return global.createApp(appId).then((appInfo) => {
 			return global.openDoc(appInfo.qAppId)
-		}).catch( (err) => {
+		}).catch((err) => {
 			return global.openDoc(appId)
 		});
 	})
@@ -47,8 +49,8 @@ session.open()
 		connectionId = _connectionId;
 		console.log('Setting script');
 		const script = `
-			lib connect to 'mongodb';		
-			Airports:						
+			lib connect to 'mongodb';
+			Airports:
 			sql { "collection": "airports", "find": {} };
 		`;
 		return app.setScript(script);

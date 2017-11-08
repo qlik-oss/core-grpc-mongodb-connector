@@ -3,7 +3,7 @@ version: "3.3"
 services:
   mongodb-database:
     container_name: mongodb-database
-    image: qlikea/mongodb-grpc-connector-database:dev
+    build: ./mongodb-image
     ports:
       - 27017:27017
     environment:
@@ -21,7 +21,7 @@ services:
     command: --legacyreload -P 9076 -S SystemLogVerbosity=5 -S EnableGrpcCustomConnectors=1 -S GrpcConnectorPlugins="mongodb-grpc-connector,mongodb-grpc-connector:50051" -S EnableConnectivityService=0 -N
   mongodb-grpc-connector:
     container_name: mongodb-grpc-connector
-    image: qlikea/mongodb-grpc-connector:dev
+    build: ../
     links:
       - mongodb-database
     ports:
