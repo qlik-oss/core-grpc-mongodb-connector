@@ -7,7 +7,7 @@ function test() {
 
 	const req = {
 		connection: {
-			connectionString: 'provider=mongodb-grpc-connector;hostname=localhost',
+			connectionString: 'provider=mongodb-grpc-connector;hostname=mongodb-database',
 			user: 'test',
 			password: 'test'
 		},

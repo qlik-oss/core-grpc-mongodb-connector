@@ -1,9 +1,14 @@
-FROM node:8
-#RUN apk add --no-cache libc6-compat
+FROM node:8-alpine
+
+RUN apk add --no-cache libc6-compat
+
 RUN mkdir -p /app/
 WORKDIR /app/
+
+# Install dependencies before copying src to make use of docker cache layering
 COPY package.json ./
-COPY src src/
 RUN npm install --quiet --production
-EXPOSE "50051"
+
+COPY src src/
+
 ENTRYPOINT ["node", "./src/index"]
