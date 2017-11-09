@@ -2,27 +2,28 @@ version: 2
 jobs:
   build:
     docker:
-      - image: node:8
+      - image: circleci/node:8
     working_directory: ~/mongodb-grpc-connector
     environment:
       DOCKER_REPO: qlikea/mongodb-grpc-connector
     steps:
       - checkout
-      - setup_remote_docker
+      - restore_cache:
+          key: npm-dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Install Docker client
-          command: |
-            curl -fsSL get.docker.com -o get-docker.sh
-            sh get-docker.sh
+          name: Install dependencies
+          command: npm install --quiet
+      - run:
+          name: Run ESLint
+          command: npm run lint
+      - save_cache:
+          key: npm-dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - setup_remote_docker
       - run:
           name: Login to Docker
           command: docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
-      - run:
-          name: Install Docker Compose
-          command: |
-            set -x
-            curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-            chmod +x /usr/local/bin/docker-compose
       - run:
           name: Spin up environment
           working_directory: ~/mongodb-grpc-connector/example
