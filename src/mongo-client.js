@@ -32,7 +32,7 @@ class MongoClient {
     const paramEntriesArray = connectionString.split(';');
     const result = paramEntriesArray.reduce((map, paramEntry) => {
       const keyAndValueArray = paramEntry.split('=');
-      if (keyAndValueArray.length == 2) {
+      if (keyAndValueArray.length === 2) {
         map[keyAndValueArray[0].trim()] = keyAndValueArray[1].trim(); // eslint-disable-line
       }
       return map;
