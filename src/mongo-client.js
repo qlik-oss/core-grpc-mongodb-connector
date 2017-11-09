@@ -24,7 +24,7 @@ class MongoClient {
     const hostname = connectionStringParams.hostname || 'localhost';
     const port = connectionStringParams.port || '27017';
     const database = connectionStringParams.database || 'test';
-    const url = `mongodb://${user}:${password}@${hostname}:27017/${database}`;
+    const url = `mongodb://${user}:${password}@${hostname}:${port}/${database}`;
     return url;
   }
 
@@ -33,7 +33,7 @@ class MongoClient {
     const result = paramEntriesArray.reduce((map, paramEntry) => {
       const keyAndValueArray = paramEntry.split('=');
       if (keyAndValueArray.length == 2) {
-        map[keyAndValueArray[0].trim()] = keyAndValueArray[1].trim();
+        map[keyAndValueArray[0].trim()] = keyAndValueArray[1].trim(); // eslint-disable-line
       }
       return map;
     }, {});

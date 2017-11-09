@@ -14,7 +14,7 @@ class MongoDbGrpcConnector {
     this.mongoClient.query(call.request, transformer);
   }
 
-  executeGenericCommand() {
+  static executeGenericCommand() {
     return { data: '{}' };
   }
 }

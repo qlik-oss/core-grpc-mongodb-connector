@@ -2,6 +2,7 @@ const stream = require('stream');
 const grpc = require('grpc');
 const qlik = require('./qlik_grpc');
 const ByteBuffer = require('bytebuffer');
+
 const GRPC_CHUNK_SIZE = 100;
 
 class MongoToGrpcTransformer extends stream.Transform {
@@ -41,13 +42,13 @@ class MongoToGrpcTransformer extends stream.Transform {
       cols: new Array(this.fieldInfo.length),
     };
 
-    for (let columnNbr = 0; columnNbr < this.fieldInfo.length; columnNbr++) {
+    for (let columnNbr = 0; columnNbr < this.fieldInfo.length; columnNbr += 1) {
       grpcChunk.cols[columnNbr] = {
         strings: new Array(this.rows.length),
       };
       const column = grpcChunk.cols[columnNbr];
       const columnFieldName = this.fieldInfo[columnNbr].name;
-      for (let rowNbr = 0; rowNbr < this.rows.length; rowNbr++) {
+      for (let rowNbr = 0; rowNbr < this.rows.length; rowNbr += 1) {
         const row = this.rows[rowNbr];
         column.strings[rowNbr] = `${row[columnFieldName]}`;
       }

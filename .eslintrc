@@ -3,7 +3,8 @@
     "rules": {
         "no-console": "off",
         "max-len": "off",
-        "import/no-unresolved": 0 // Otherwise npm install had to be executed in each example
+        "import/no-unresolved": 0, // Otherwise npm install had to be executed in each example
+        "class-methods-use-this": 0
     },
     "env": {
       "node": true
