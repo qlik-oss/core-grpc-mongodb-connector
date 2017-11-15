@@ -1,10 +1,10 @@
 # Example MongoDB GRPC Connector
 
 The Example MongoDB GRPC Connector shows how to load data into QIX Engine from MongoDB using a
-dockerized connector built in Javascript. It streams the data using nodejs streams though
+dockerized connector built in Javascript. It streams the data using NodeJS streams though
 the following components before sending it onto QIX Engine.
 * mongo-client - reads the data from the database into reasonably sized json data chunks.
-* mongo-to-grpc-transformer - takes the json data chunks and translates them into grpc data chunks. The data is then sent straight into the grpc output stream.
+* mongo-to-grpc-transformer - takes the json data chunks and translates them into GRPC data chunks. The data is then sent straight into the GRPC output stream.
 
 ## Example
 
