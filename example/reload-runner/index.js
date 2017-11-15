@@ -81,9 +81,13 @@ session.open()
     return app.getTableData(-1, 50, true, 'Airports');
   })
   .then((tableData) => {
+    if (tableData.length === 0) {
+      return Promise.reject('Empty table response');
+    }
     // Convert table grid into a string using some functional magic
     const tableDataAsString = tableData.map(row => row.qValue.map(value => value.qText).reduce((left, right) => `${left}\t${right}`)).reduce((row1, row2) => `${row1}\n${row2}`);
     console.log(tableDataAsString);
+    return undefined;
   })
   .then(() => session.close())
   .then(() => console.log('Session closed'))
