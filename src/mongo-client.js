@@ -1,18 +1,25 @@
+const grpc = require('grpc');
 const mongodb = require('mongodb');
+const { MongoToGrpcTransformer } = require('./mongo-to-grpc-transformer');
 
 class MongoClient {
-  query(req, callbackstream) {
-    const url = this._connectionInfoToMongoUrl(req.connection);
-    const parameters = JSON.parse(req.parameters.statement);
+  query(call) {
+    const url = this._connectionInfoToMongoUrl(call.request.connection);
+    const parameters = JSON.parse(call.request.parameters.statement);
     mongodb.MongoClient.connect(url, (err, db) => {
       if (err) {
-        console.log(url);
-        console.log(err);
-        callbackstream.end();
+        const grpcError = {
+          code: grpc.status.INVALID_ARGUMENT,
+          details: err.message,
+        };
+        call.emit('error', grpcError);
+        call.end();
       } else {
         const collection = db.collection(parameters.collection);
         const cursor = collection.find(parameters.find || {});
-        cursor.pipe(callbackstream);
+        const transformer = new MongoToGrpcTransformer(call);
+        transformer.pipe(call);
+        cursor.pipe(transformer);
       }
     });
   }
