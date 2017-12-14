@@ -1,7 +1,6 @@
 const grpc = require('grpc');
 const qlik = require('./qlik_grpc');
 const { MongoClient } = require('./mongo-client');
-const { MongoToGrpcTransformer } = require('./mongo-to-grpc-transformer');
 
 class MongoDbGrpcConnector {
   constructor(mongoClient) {
@@ -9,12 +8,10 @@ class MongoDbGrpcConnector {
   }
   getData(call) {
     console.log('Get data...', call);
-    const transformer = new MongoToGrpcTransformer(call);
-    transformer.pipe(call);
-    this.mongoClient.query(call.request, transformer);
+    this.mongoClient.query(call);
   }
 
-  static executeGenericCommand() {
+  executeGenericCommand() {
     return { data: '{}' };
   }
 }
