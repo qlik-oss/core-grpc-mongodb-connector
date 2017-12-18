@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "author": "QlikTech International AB",
+  "description": "GRPC example connector for MongoDB",
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
