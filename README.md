@@ -29,3 +29,7 @@ $ cd reload-runner
 $ npm install
 $ npm start
 ```
+
+## Contributing
+
+We welcome and encourage contributions! Please read [Open Source at Qlik R&D](https://github.com/qlik-oss/open-source) for more info on how to get involved.
