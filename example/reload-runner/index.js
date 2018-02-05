@@ -84,6 +84,14 @@ session.open()
     if (tableData.length === 0) {
       return Promise.reject('Empty table response');
     }
+
+    // Check if the first row contains what is expected. Exclude the last date column since it varies.
+    const firstDataRow = tableData[1].qValue.map(obj => obj.qText).reduce((a, b) => `${a}:${b}`);
+    const expectedFirstDataRowExcludingDate = '5871:Moala Airport:Moala:Fiji:MFJ:NFMO:-18.5667:179.951:13:12:U:Pacific/Fiji';
+    if (firstDataRow.lastIndexOf(expectedFirstDataRowExcludingDate) !== 0) {
+      return Promise.reject('The check on the first row content was unsuccessful');
+    }
+
     // Convert table grid into a string using some functional magic
     const tableDataAsString = tableData.map(row => row.qValue.map(value => value.qText).reduce((left, right) => `${left}\t${right}`)).reduce((row1, row2) => `${row1}\n${row2}`);
     console.log(tableDataAsString);

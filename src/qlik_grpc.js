@@ -1,4 +1,4 @@
-const PROTO_PATH = `${__dirname}/grpc_server.proto`;
+const PROTO_PATH = `${__dirname}/connector.proto`;
 const grpc = require('grpc');
 
 const qlik = grpc.load(PROTO_PATH).qlik;

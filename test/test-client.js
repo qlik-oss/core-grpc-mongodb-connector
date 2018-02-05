@@ -23,8 +23,17 @@ function test() {
 
   const t0 = new Date().getTime();
   const call = client.getData(req);
+  call.on('metadata', (metadata) => {
+    const header = metadata.get('x-qlik-getdata-bin');
+    if (header[0]) {
+      const dataResponse = qlik.GetDataResponse.decode(header[0]);
+      console.log(dataResponse);
+    } else {
+      console.log('No header');
+    }
+  });
   call.on('data', (data) => {
-    console.log('Client received data', data.cols[0].strings.length);
+    console.log('Client received data', data.stringCodes.length);
   });
   call.on('end', () => {
     const t1 = new Date().getTime();

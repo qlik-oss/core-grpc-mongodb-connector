@@ -19,7 +19,7 @@ class MongoToGrpcTransformer extends stream.Transform {
       name,
       semanticType: 0,
       fieldAttributes: {
-        Type: 1,
+        Type: 0,
       },
     }));
     return fields;
@@ -30,27 +30,43 @@ class MongoToGrpcTransformer extends stream.Transform {
       tableName: '',
       fieldInfo: this.fieldInfo,
     });
-    const bytebuffer = new ByteBuffer();
+    const bytebuffer = new ByteBuffer(256);
+
     dataResponse.encode(bytebuffer);
     const metadata = new grpc.Metadata();
-    metadata.set('x-qlik-getdata-bin', bytebuffer.buffer);
+    metadata.set('x-qlik-getdata-bin', bytebuffer.flip().toBuffer());
     this.call.sendMetadata(metadata);
   }
 
   _compileRowsToGrpcStructure() {
     const grpcChunk = {
-      cols: new Array(this.fieldInfo.length),
+      stringBucket: [],
+      doubleBucket: [],
+      stringCodes: [],
+      numberCodes: [],
     };
 
-    for (let columnNbr = 0; columnNbr < this.fieldInfo.length; columnNbr += 1) {
-      grpcChunk.cols[columnNbr] = {
-        strings: new Array(this.rows.length),
-      };
-      const column = grpcChunk.cols[columnNbr];
-      const columnFieldName = this.fieldInfo[columnNbr].name;
-      for (let rowNbr = 0; rowNbr < this.rows.length; rowNbr += 1) {
-        const row = this.rows[rowNbr];
-        column.strings[rowNbr] = `${row[columnFieldName]}`;
+    for (let rowNbr = 0; rowNbr < this.rows.length; rowNbr += 1) {
+      for (let columnNbr = 0; columnNbr < this.fieldInfo.length; columnNbr += 1) {
+        const columnFieldName = this.fieldInfo[columnNbr].name;
+        const value = this.rows[rowNbr][columnFieldName];
+        if (typeof value === 'string') {
+          grpcChunk.stringBucket.push(value); // Add the string value to the string bucket
+          grpcChunk.stringCodes.push(grpcChunk.stringBucket.length - 1); // Point out the string value location
+          grpcChunk.numberCodes.push(-1); // No numeric value
+        } else if (typeof value === 'number') {
+          grpcChunk.doubleBucket.push(value); // Add the number into the doubleBucket array
+          grpcChunk.numberCodes.push(grpcChunk.doubleBucket.length - 1); // Point out the numeric value location
+          grpcChunk.stringCodes.push(-1); // No string value
+        } else if (typeof value === 'boolean') {
+          grpcChunk.numberCodes.push(-2); // Indicate that the value comes inline in the numberCodes array
+          grpcChunk.numberCodes.push(value ? -1 : 0); // Add -1 for true and 0 for false
+          grpcChunk.stringCodes.push(-1); // No string value
+        } else {
+          grpcChunk.stringBucket.push(`${value}`);  // For other unknown types simply format it to a string as a fail safe
+          grpcChunk.stringCodes.push(grpcChunk.stringBucket.length - 1); // Point out the string value location
+          grpcChunk.numberCodes.push(-1); // No numeric value
+        }
       }
     }
     this.rows = [];
