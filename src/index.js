@@ -7,12 +7,7 @@ class MongoDbGrpcConnector {
     this.mongoClient = mongoClient;
   }
   getData(call) {
-    console.log('Get data...', call);
     this.mongoClient.query(call);
-  }
-
-  executeGenericCommand() {
-    return { data: '{}' };
   }
 }
 

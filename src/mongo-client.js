@@ -5,24 +5,29 @@ const { MongoToGrpcTransformer } = require('./mongo-to-grpc-transformer');
 class MongoClient {
   query(call) {
     const url = this._connectionInfoToMongoUrl(call.request.connection);
-    const parameters = JSON.parse(call.request.parameters.statement);
-    mongodb.MongoClient.connect(url, (err, db) => {
-      if (err) {
-        call.emit('error', this._grpcStatusError(err.message));
-        call.end();
-      } else {
-        try {
-          const collection = db.collection(parameters.collection);
-          const cursor = collection.find(parameters.find || {});
-          const transformer = new MongoToGrpcTransformer(call);
-          transformer.pipe(call);
-          cursor.pipe(transformer);
-        } catch (error) {
-          call.emit('error', this._grpcStatusError(error.message));
+    try {
+      const parameters = JSON.parse(call.request.parameters.statement);
+      mongodb.MongoClient.connect(url, (err, db) => {
+        if (err) {
+          call.emit('error', this._grpcStatusError(err.message));
           call.end();
+        } else {
+          try {
+            const collection = db.collection(parameters.collection);
+            const cursor = collection.find(parameters.find || {});
+            const transformer = new MongoToGrpcTransformer(call);
+            transformer.pipe(call);
+            cursor.pipe(transformer);
+          } catch (error) {
+            call.emit('error', this._grpcStatusError(error.message));
+            call.end();
+          }
         }
-      }
-    });
+      });
+    } catch (err) {
+      call.emit('error', this._grpcStatusError(err.message));
+      call.end();
+    }
   }
 
   _grpcStatusError(message) {
