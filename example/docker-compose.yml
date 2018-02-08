@@ -18,7 +18,7 @@ services:
     ports:
       - 9076:9076
       - 9090:9090
-    command: --legacyreload -P 9076 -S SystemLogVerbosity=5 -S EnableGrpcCustomConnectors=1 -S GrpcConnectorPlugins="mongodb-grpc-connector,mongodb-grpc-connector:50051" -S EnableConnectivityService=0 -N
+    command: -S AcceptEULA=${ACCEPT_EULA} -S SystemLogVerbosity=5 -S EnableGrpcCustomConnectors=1 -S GrpcConnectorPlugins="mongodb-grpc-connector,mongodb-grpc-connector:50051" -S EnableConnectivityService=0 -N
   mongodb-grpc-connector:
     container_name: mongodb-grpc-connector
     build: ../

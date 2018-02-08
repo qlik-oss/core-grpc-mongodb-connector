@@ -27,8 +27,7 @@ jobs:
       - run:
           name: Spin up environment
           working_directory: ~/mongodb-grpc-connector/example
-          command: |
-            docker-compose up -d
+          command: ACCEPT_EULA=yes docker-compose up -d
       - run:
           name: Execute tests on remote dockers
           working_directory: ~/mongodb-grpc-connector/example/reload-runner
