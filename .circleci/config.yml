@@ -36,7 +36,5 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            VER="0.0.1-$CIRCLE_BUILD_NUM"
-            echo "$VER" > ./version.txt
-            docker build -t $DOCKER_REPO:$VER .
+            docker build .
 
