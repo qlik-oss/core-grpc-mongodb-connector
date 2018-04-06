@@ -5,7 +5,7 @@ jobs:
       - image: circleci/node:8
     working_directory: ~/mongodb-grpc-connector
     environment:
-      DOCKER_REPO: qlikea/mongodb-grpc-connector
+      DOCKER_REPO: qlikcore/mongodb-grpc-connector
     steps:
       - checkout
       - restore_cache:
