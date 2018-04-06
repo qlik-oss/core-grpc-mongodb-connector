@@ -4,8 +4,6 @@ jobs:
     docker:
       - image: circleci/node:8
     working_directory: ~/mongodb-grpc-connector
-    environment:
-      DOCKER_REPO: qlikea/mongodb-grpc-connector
     steps:
       - checkout
       - restore_cache:
@@ -38,15 +36,5 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            VER="0.0.1-$CIRCLE_BUILD_NUM"
-            echo "$VER" > ./version.txt
-            docker build -t $DOCKER_REPO:$VER .
-      - run:
-          name: Push image to Docker Hub
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              VER=$(cat ./version.txt)
-              docker tag $DOCKER_REPO:$VER $DOCKER_REPO:latest
-            fi
-            docker push $DOCKER_REPO
+            docker build .
 
