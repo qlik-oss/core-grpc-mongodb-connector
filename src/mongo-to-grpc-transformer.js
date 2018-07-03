@@ -1,7 +1,7 @@
 const stream = require('stream');
 const grpc = require('grpc');
-const qlik = require('./qlik_grpc');
 const ByteBuffer = require('bytebuffer');
+const qlik = require('./qlik_grpc');
 
 const GRPC_CHUNK_SIZE = 100;
 
@@ -63,7 +63,7 @@ class MongoToGrpcTransformer extends stream.Transform {
           grpcChunk.numberCodes.push(value ? -1 : 0); // Add -1 for true and 0 for false
           grpcChunk.stringCodes.push(-1); // No string value
         } else {
-          grpcChunk.stringBucket.push(`${value}`);  // For other unknown types simply format it to a string as a fail safe
+          grpcChunk.stringBucket.push(`${value}`); // For other unknown types simply format it to a string as a fail safe
           grpcChunk.stringCodes.push(grpcChunk.stringBucket.length - 1); // Point out the string value location
           grpcChunk.numberCodes.push(-1); // No numeric value
         }

@@ -6,6 +6,7 @@ class MongoDbGrpcConnector {
   constructor(mongoClient) {
     this.mongoClient = mongoClient;
   }
+
   getData(call) {
     this.mongoClient.query(call);
   }
@@ -22,4 +23,3 @@ function main() {
 }
 console.log('Starting...');
 main();
-

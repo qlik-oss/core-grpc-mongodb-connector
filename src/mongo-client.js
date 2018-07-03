@@ -39,8 +39,7 @@ class MongoClient {
 
   _connectionInfoToMongoUrl(connection) {
     const connectionStringParams = this._connectionStringToParameterMap(connection.connectionString);
-    const user = connection.user;
-    const password = connection.password;
+    const { user, password } = connection;
     const hostname = connectionStringParams.hostname || 'localhost';
     const port = connectionStringParams.port || '27017';
     const database = connectionStringParams.database || 'test';

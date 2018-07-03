@@ -82,20 +82,20 @@ session.open()
   })
   .then((tableData) => {
     if (tableData.length === 0) {
-      return Promise.reject('Empty table response');
+      return Promise.reject(new Error('Empty table response'));
     }
 
     // Check if we can find one of the rows we know should be there.
     const firstRow = tableData.find(row => row.qValue[0].qNumber === 5871);
     if (!firstRow) {
-      return Promise.reject('Could not find row with id 5871');
+      return Promise.reject(new Error('Could not find row with id 5871'));
     }
 
     // Check if the contents of that row matches the expected.
     const firstRowAsString = firstRow.qValue.map(obj => obj.qText).reduce((a, b) => `${a}:${b}`);
     const expectedFirstRow = '5871:Moala Airport:Moala:Fiji:MFJ:NFMO:-18.5667:179.951:13:12:U:Pacific/Fiji';
     if (firstRowAsString.lastIndexOf(expectedFirstRow) !== 0) {
-      return Promise.reject(`The check on the first row content was unsuccessful: ${firstRowAsString}`);
+      return Promise.reject(new Error(`The check on the first row content was unsuccessful: ${firstRowAsString}`));
     }
 
     // Convert table grid into a string using some functional magic
