@@ -7,13 +7,13 @@ class MongoClient {
     const url = this._connectionInfoToMongoUrl(call.request.connection);
     try {
       const parameters = JSON.parse(call.request.parameters.statement);
-      mongodb.MongoClient.connect(url, (err, db) => {
+      mongodb.MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
         if (err) {
           call.emit('error', this._grpcStatusError(err.message));
           call.end();
         } else {
           try {
-            const collection = db.collection(parameters.collection);
+            const collection = client.db().collection(parameters.collection);
             const cursor = collection.find(parameters.find || {});
             const transformer = new MongoToGrpcTransformer(call);
             transformer.pipe(call);
