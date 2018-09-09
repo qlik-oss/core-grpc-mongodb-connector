@@ -6,16 +6,17 @@ const qlik = require('./qlik_grpc');
 const GRPC_CHUNK_SIZE = 100;
 
 class MongoToGrpcTransformer extends stream.Transform {
-  constructor(call) {
+  constructor(call, booleanType) {
     super({ objectMode: true, writableObjectMode: true, readableObjectMode: true });
     this.call = call;
     this.headerSent = false;
     this.rows = [];
     this.fieldInfo = [];
+    this.booleanType = booleanType || 'numeric';
   }
 
   _buildFieldInfo(firstChunk) {
-    const fields = Object.keys(firstChunk).filter(name => typeof firstChunk[name] !== 'object').map(name => ({
+    const fields = Object.keys(firstChunk).map(name => ({
       name,
       semanticType: 0,
       fieldAttributes: {
@@ -58,6 +59,10 @@ class MongoToGrpcTransformer extends stream.Transform {
           grpcChunk.doubleBucket.push(value); // Add the number into the doubleBucket array
           grpcChunk.numberCodes.push(grpcChunk.doubleBucket.length - 1); // Point out the numeric value location
           grpcChunk.stringCodes.push(-1); // No string value
+        } else if (typeof value === 'boolean' && this.booleanType === 'string') {
+          grpcChunk.stringBucket.push(value ? 'True' : 'False'); // Add the string value to the string bucket
+          grpcChunk.stringCodes.push(grpcChunk.stringBucket.length - 1); // Point out the string value location
+          grpcChunk.numberCodes.push(-1); // No numeric value
         } else if (typeof value === 'boolean') {
           grpcChunk.numberCodes.push(-2); // Indicate that the value comes inline in the numberCodes array
           grpcChunk.numberCodes.push(value ? -1 : 0); // Add -1 for true and 0 for false
