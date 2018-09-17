@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "bytebuffer": "5.0.1",
-    "grpc": "1.14.2",
-    "mongodb": "3.1.4"
+    "grpc": "1.15.1",
+    "mongodb": "3.1.6"
   },
   "devDependencies": {
-    "eslint": "5.5.0",
+    "eslint": "5.6.0",
     "eslint-config-airbnb-base": "13.1.0",
     "eslint-plugin-import": "2.14.0"
   }
