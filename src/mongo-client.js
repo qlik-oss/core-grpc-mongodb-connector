@@ -14,8 +14,8 @@ class MongoClient {
         } else {
           try {
             const collection = client.db().collection(parameters.collection);
-            const cursor = collection.find(parameters.find || {});
-            const transformer = new MongoToGrpcTransformer(call);
+            const cursor = collection.find(parameters.find || {}, parameters.options || {});
+            const transformer = new MongoToGrpcTransformer(call, parameters.booleanType);
             transformer.pipe(call);
             cursor.pipe(transformer);
           } catch (error) {
