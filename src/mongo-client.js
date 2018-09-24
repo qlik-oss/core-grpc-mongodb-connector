@@ -15,6 +15,10 @@ class MongoClient {
           try {
             const collection = client.db().collection(parameters.collection);
             const cursor = collection.find(parameters.find || {}, parameters.options || {});
+            cursor.on('close', () => {
+              // we need to close the connection
+              client.close();
+            });
             const transformer = new MongoToGrpcTransformer(call, parameters.booleanType);
             transformer.pipe(call);
             cursor.pipe(transformer);
