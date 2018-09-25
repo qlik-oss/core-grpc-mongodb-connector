@@ -19,7 +19,7 @@ class MongoClient {
               // we need to close the connection
               client.close();
             });
-            const transformer = new MongoToGrpcTransformer(call, parameters.booleanType);
+            const transformer = new MongoToGrpcTransformer(call, parameters.booleanType, parameters.options ? parameters.options.projection : null);
             transformer.pipe(call);
             cursor.pipe(transformer);
           } catch (error) {
