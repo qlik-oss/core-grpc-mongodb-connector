@@ -6,24 +6,29 @@ const qlik = require('./qlik_grpc');
 const GRPC_CHUNK_SIZE = 100;
 
 class MongoToGrpcTransformer extends stream.Transform {
-  constructor(call, booleanType) {
+  constructor(call, booleanType, projection) {
     super({ objectMode: true, writableObjectMode: true, readableObjectMode: true });
     this.call = call;
     this.headerSent = false;
     this.rows = [];
     this.fieldInfo = [];
     this.booleanType = booleanType || 'numeric';
+    this.projection = projection;
   }
 
   _buildFieldInfo(firstChunk) {
-    const fields = Object.keys(firstChunk).map(name => ({
-      name,
-      semanticType: 0,
-      fieldAttributes: {
-        Type: 0,
-      },
-    }));
-    return fields;
+    if (this.projection || firstChunk) {
+      const fields = Object.keys(this.projection || firstChunk).map(name => ({
+        name,
+        semanticType: 0,
+        fieldAttributes: {
+          Type: 0,
+        },
+      }));
+      return fields;
+    }
+
+    return [];
   }
 
   _sendMetadata() {
@@ -79,11 +84,7 @@ class MongoToGrpcTransformer extends stream.Transform {
   }
 
   _transform(chunk, encoding, callback) {
-    if (!this.headerSent) {
-      this.fieldInfo = this._buildFieldInfo(chunk);
-      this._sendMetadata();
-      this.headerSent = true;
-    }
+    this._checkHeaderSent(chunk);
     this.rows.push(chunk);
 
     if (this.rows.length >= GRPC_CHUNK_SIZE) {
@@ -93,7 +94,18 @@ class MongoToGrpcTransformer extends stream.Transform {
     }
   }
 
+  _checkHeaderSent(chunk) {
+    if (!this.headerSent) {
+      this.fieldInfo = this._buildFieldInfo(chunk);
+      this._sendMetadata();
+      this.headerSent = true;
+    }
+  }
+
   _flush(callback) {
+    // if the header has not been sent most likely no data was fetched
+    // but we should still make sure the header is sent
+    this._checkHeaderSent();
     if (this.rows.length >= 0) {
       callback(null, this._compileRowsToGrpcStructure());
     } else {
