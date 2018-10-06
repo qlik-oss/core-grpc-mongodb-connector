@@ -9,6 +9,6 @@
     },
     "dependencies": {
         "enigma.js": "2.3.0",
-        "ws": "3.3.3"
+        "ws": "6.1.0"
     }
 }
