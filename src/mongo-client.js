@@ -14,7 +14,12 @@ class MongoClient {
         } else {
           try {
             const collection = client.db().collection(parameters.collection);
-            const cursor = collection.find(parameters.find || {}, parameters.options || {});
+            let cursor = null;
+            if (parameters.aggregate) {
+              cursor = collection.aggregate(parameters.aggregate, parameters.options || {});
+            } else {
+              cursor = collection.find(parameters.find || {}, parameters.options || {});
+            }
             cursor.on('close', () => {
               // we need to close the connection
               client.close();
@@ -23,12 +28,14 @@ class MongoClient {
             transformer.pipe(call);
             cursor.pipe(transformer);
           } catch (error) {
+            console.error(error);
             call.emit('error', this._grpcStatusError(error.message));
             call.end();
           }
         }
       });
     } catch (err) {
+      console.error(err);
       call.emit('error', this._grpcStatusError(err.message));
       call.end();
     }
