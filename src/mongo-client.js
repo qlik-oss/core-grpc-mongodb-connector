@@ -15,7 +15,7 @@ class MongoClient {
           try {
             const collection = client.db().collection(parameters.collection);
             let cursor = null;
-            if (parameters.aggregate !== undefined) {
+            if (parameters.aggregate) {
               cursor = collection.aggregate(parameters.aggregate, parameters.options || {});
             } else {
               cursor = collection.find(parameters.find || {}, parameters.options || {});
