@@ -18,7 +18,7 @@ class MongoToGrpcTransformer extends stream.Transform {
 
   _buildFieldInfo(firstChunk) {
     if (this.projection || firstChunk) {
-      const fields = Object.keys(this.projection || firstChunk).map(name => ({
+      const fields = Object.keys(this.projection || firstChunk).map((name) => ({
         name,
         semanticType: 0,
         fieldAttributes: {
