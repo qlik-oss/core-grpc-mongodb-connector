@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "bytebuffer": "5.0.1",
-    "grpc": "1.23.3",
+    "grpc": "1.24.0",
     "mongodb": "3.3.2"
   },
   "devDependencies": {
