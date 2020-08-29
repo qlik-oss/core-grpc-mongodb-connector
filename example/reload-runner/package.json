@@ -8,7 +8,7 @@
         "start": "node index.js"
     },
     "dependencies": {
-        "enigma.js": "2.7.1",
+        "enigma.js": "2.7.2",
         "ws": "7.3.1"
     }
 }
