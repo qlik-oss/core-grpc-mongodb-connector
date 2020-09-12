@@ -12,7 +12,7 @@ services:
       - MONGO_INITDB_DATABASE=test
   qix-engine:
     container_name: qix-engine
-    image: qlikcore/engine:12.754.0
+    image: qlikcore/engine:12.792.0
     links:
       - mongodb-grpc-connector
     ports:
