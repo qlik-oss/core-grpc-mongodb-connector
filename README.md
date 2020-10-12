@@ -1,5 +1,7 @@
 # Example MongoDB GRPC Connector
 
+*As of 1 July 2020, Qlik Core is no longer available to new customers. No further maintenance will be done in this repository.*
+
 The Example MongoDB GRPC Connector shows how to load data into Qlik Associative Engine from MongoDB using a
 dockerized connector built in Javascript. It streams the data using NodeJS streams though
 the following components before sending it onto Qlik Associative Engine.
